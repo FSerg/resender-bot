@@ -63,7 +63,7 @@ app.post('/ut', function(req, res) {
     });
     kkms = kkms.filter(uniqueVal);
     var maxValue = Math.max.apply(null, totalValues);
-    maxValue = maxValue + maxValue*0.1;
+    maxValue = maxValue + maxValue*0.15;
 
     var opts = { parse_mode: 'Markdown' };
     bot.sendMessage(data.SenderID, myText, opts);
@@ -132,7 +132,12 @@ function GetInFileDataBar(title, kkms, cashValues, cardValues, maxValue) {
             "text": title
         },
         "xAxis": {
-            "categories": kkms
+            "categories": kkms,
+            "labels": {
+                "style": {
+                    "fontSize": "10px"
+                }
+            }
         },
         "yAxis": {
             "min": 0,
@@ -143,8 +148,9 @@ function GetInFileDataBar(title, kkms, cashValues, cardValues, maxValue) {
             "stackLabels": {
                 "enabled": true,
                 "style": {
+                    "fontSize": "10px",
                     "fontWeight": "bold",
-                    "color": "(Highcharts.theme && Highcharts.theme.textColor) || gray"
+                    "color": "(Highcharts.theme && Highcharts.theme.textColor) || 'gray'"
                 }
             }
         },
@@ -152,19 +158,24 @@ function GetInFileDataBar(title, kkms, cashValues, cardValues, maxValue) {
             "reversed": true
         },
         "plotOptions": {
-            "series": {
-                "stacking": "normal",
-                "dataLabels": {
-                    "enabled": true,
-                    "align": "right",
-                    "x": -10,
-                    "style": {
-                        "fontSize": "10px",
-                        "fontFamily": "Verdana, sans-serif"
-                    }
-                }
-            }
-        },
+             "series": {
+                 "stacking": "normal"
+             }
+         },
+        // "plotOptions": {
+        //     "series": {
+        //         "stacking": "normal",
+        //         "dataLabels": {
+        //             "enabled": true,
+        //             "align": "right",
+        //             "x": -10,
+        //             "style": {
+        //                 "fontSize": "10px",
+        //                 "fontFamily": "Verdana, sans-serif"
+        //             }
+        //         }
+        //     }
+        // },
         "series": [{
             "name": "Картой",
             "data": cardValues
