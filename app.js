@@ -144,7 +144,7 @@ function SendPic(SenderID, inFileData, width, callback) {
 
 function GetInFileDataChart(title, subtitle, dates, series) {
     return {
-        "chart": { "type": 'column' },
+        "chart": { "type": 'area', "height": 500 },
         "title": { "text": title },
         "subtitle": { "text": subtitle },
         "xAxis": {
@@ -183,15 +183,15 @@ function GetInFileDataChart(title, subtitle, dates, series) {
         },
 
         "plotOptions": {
-            "column": {
-                "stacking": 'normal',
-                "dataLabels": {
-                    "enabled": true,
-                    "style": {
-                        "fontSize": "8px",
-                        "fontWeight": "bold"
-                    }
-                }
+            "area": {
+                "stacking": 'normal'
+                // "dataLabels": {
+                //     "enabled": true,
+                //     "style": {
+                //         "fontSize": "8px",
+                //         "fontWeight": "bold"
+                //     }
+                // }
             }
         },
         "legend": {
