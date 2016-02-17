@@ -89,7 +89,7 @@ app.post('/ut3', function(req, res) {
     var inFileData = GetInFileDataChart(data.Title, data.SubTitle, data.dates, data.series);
 
     console.log('chart!');
-    SendPic(data.SenderID, inFileData, 800, function (error) {
+    SendPic(data.SenderID, inFileData, 950, function (error) {
         if (error) {
             // ОТПРАВИМ Ошибочный СТАТУС ВЫПОЛНЕНИЯ
             res.status(400).send({ status: 'Ошибка при отправке картинки графика' });
