@@ -144,7 +144,7 @@ function SendPic(SenderID, inFileData, width, callback) {
 
 function GetInFileDataChart(title, subtitle, dates, series) {
     return {
-        "chart": { "type": 'area', "height": 500 },
+        "chart": { "type": 'area' }, //, "height": 500 },
         "title": { "text": title },
         "subtitle": { "text": subtitle },
         "xAxis": {
@@ -196,7 +196,7 @@ function GetInFileDataChart(title, subtitle, dates, series) {
         },
         "legend": {
             "itemStyle": {
-                 "fontSize":'8px',
+                 "fontSize":'9px',
                  "fontWeight": "normal"
               }
         },
