@@ -24,20 +24,14 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.get('/123', function(req, res) {
-    var myText = 'Привет!';
-    bot.sendMessage(config.chatid, myText);
-});
 
-app.post('/ut', function(req, res) {
-    // console.log('===========');
-    // console.log(req);
+app.post('/ut12', function(req, res) {
+
     console.log('===========');
     console.log(req.body);
     console.log('===========');
 
     var data = req.body;
-    //var myText = 'Выручка на тек.момент ('+moment().format('llll')+'):\n';
     var myText = data.Title+'\n';
     var summaTotal = numeral(data.Summa).format('0,0.00 $');
     myText = myText + '*Общая: '+summaTotal+'*\n';
@@ -69,10 +63,33 @@ app.post('/ut', function(req, res) {
     bot.sendMessage(data.SenderID, myText, opts);
 
     // ПОДГОТОВИМ И ОТПРАВИМ ГРАФИК
-    // var inFileData = GetInFileDataPie(data.Title, series);
     var inFileData = GetInFileDataBar(data.Title, kkms, cashValues, cardValues, maxValue);
 
-    SendPic(data.SenderID, inFileData, function (error) {
+    SendPic(data.SenderID, inFileData, 800, function (error) {
+        if (error) {
+            // ОТПРАВИМ Ошибочный СТАТУС ВЫПОЛНЕНИЯ
+            res.status(400).send({ status: 'Ошибка при отправке картинки графика' });
+        }
+
+        // ОТПРАВИМ УСПЕШНЫЙ СТАТУС ВЫПОЛНЕНИЯ
+        res.status(200).send({ status: 'ok' });
+    });
+
+});
+
+app.post('/ut3', function(req, res) {
+
+    console.log('===========');
+    console.log(req.body);
+    console.log('===========');
+
+    var data = req.body;
+
+    // ПОДГОТОВИМ И ОТПРАВИМ ГРАФИК
+    var inFileData = GetInFileDataChart(data.Title, data.SubTitle, data.dates, data.series);
+
+    console.log('chart!');
+    SendPic(data.SenderID, inFileData, 800, function (error) {
         if (error) {
             // ОТПРАВИМ Ошибочный СТАТУС ВЫПОЛНЕНИЯ
             res.status(400).send({ status: 'Ошибка при отправке картинки графика' });
@@ -93,7 +110,7 @@ app.listen(config.port, function(err) {
 });
 
 
-function SendPic(SenderID, inFileData, callback) {
+function SendPic(SenderID, inFileData, width, callback) {
     // запишем файл входящих параметров
     var inFileName = SenderID+'.json';
     var picFileName = SenderID+'.png';
@@ -102,17 +119,19 @@ function SendPic(SenderID, inFileData, callback) {
         './exporter/highcharts-convert.js',
         '-infile', inFileName,
         '-outfile', picFileName,
-        '-width', '800' ];
+        '-width', width ];
 
     // запустим конвертер
     childProcess.execFile(phantom.path, childArgs, null, function(error, stdout, stderr) {
         if (error) {
+            console.log('error converting!');
             console.log(error);
             callback(error);
         }
 
         // отправляем файл
-        bot.sendPhoto(SenderID, picFileName, {title: 'Выручка по кассам'})
+        console.log('ready send pic!');
+        bot.sendPhoto(SenderID, picFileName, {title: 'График'})
             .then(function(resp) {
                 console.log("Pic was successfully sent!");
                 console.log("Delete temporary files...");
@@ -122,6 +141,53 @@ function SendPic(SenderID, inFileData, callback) {
             });
     });
 }
+
+function GetInFileDataChart(title, subtitle, dates, series) {
+    return {
+        "chart": { "type": 'area' },
+        "title": { "text": title },
+        "subtitle": { "text": subtitle },
+        "xAxis": {
+            "categories": dates,
+            "title": { "enabled": false },
+            "labels": {
+                "style": {
+                    "fontSize": "8px",
+                    "fontWeight": "bold"
+                }
+            }
+        },
+        "yAxis": {
+            "title": {
+                "text": 'Сумма рублей'
+            }
+        },
+
+        "plotOptions": {
+            "area": {
+                "stacking": 'normal',
+                "lineColor": '#666666',
+                "lineWidth": 1,
+                "marker": {
+                    "lineWidth": 1,
+                    "lineColor": '#666666'
+                },
+                "dataLabels": {
+                    "enabled": true
+                }
+            }
+        },
+        "legend": {
+            "itemStyle": {
+                 "fontSize":'8px',
+                 "fontWeight": "normal"
+              }
+        },
+        "series": series
+    };
+
+} // GetInFileDataChart
+
 
 function GetInFileDataBar(title, kkms, cashValues, cardValues, maxValue) {
     return  {
