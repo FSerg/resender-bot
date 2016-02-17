@@ -144,7 +144,7 @@ function SendPic(SenderID, inFileData, width, callback) {
 
 function GetInFileDataChart(title, subtitle, dates, series) {
     return {
-        "chart": { "type": 'area' },
+        "chart": { "type": 'column' },
         "title": { "text": title },
         "subtitle": { "text": subtitle },
         "xAxis": {
@@ -159,21 +159,38 @@ function GetInFileDataChart(title, subtitle, dates, series) {
         },
         "yAxis": {
             "title": {
-                "text": 'Сумма рублей'
+                "text": 'Сумма рублей',
+                "style": {
+                    "fontSize": "8px",
+                    "fontWeight": "bold"
+                }
+            },
+            "labels": {
+                "enabled": false,
+                "style": {
+                    "fontSize": "8px",
+                    "fontWeight": "bold"
+                }
+            },
+            "stackLabels": {
+                "enabled": true,
+                "style": {
+                    "fontSize": "8px",
+                    "fontWeight": "bold",
+                    "color": "(Highcharts.theme && Highcharts.theme.textColor) || 'gray'"
+                }
             }
         },
 
         "plotOptions": {
-            "area": {
+            "column": {
                 "stacking": 'normal',
-                "lineColor": '#666666',
-                "lineWidth": 1,
-                "marker": {
-                    "lineWidth": 1,
-                    "lineColor": '#666666'
-                },
                 "dataLabels": {
-                    "enabled": true
+                    "enabled": true,
+                    "style": {
+                        "fontSize": "8px",
+                        "fontWeight": "bold"
+                    }
                 }
             }
         },
