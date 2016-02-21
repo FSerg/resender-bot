@@ -101,6 +101,30 @@ app.post('/ut3', function(req, res) {
 
 });
 
+app.post('/ut4', function(req, res) {
+
+    console.log('===========');
+    console.log(req.body);
+    console.log('===========');
+
+    var data = req.body;
+
+    // ПОДГОТОВИМ И ОТПРАВИМ ГРАФИК
+    var inFileData = GetInFileDataChartTotal(data.Title, data.SubTitle, data.dates, data.series);
+
+    console.log('chart!');
+    SendPic(data.SenderID, inFileData, 950, function (error) {
+        if (error) {
+            // ОТПРАВИМ Ошибочный СТАТУС ВЫПОЛНЕНИЯ
+            res.status(400).send({ status: 'Ошибка при отправке картинки графика' });
+        }
+
+        // ОТПРАВИМ УСПЕШНЫЙ СТАТУС ВЫПОЛНЕНИЯ
+        res.status(200).send({ status: 'ok' });
+    });
+
+});
+
 app.listen(config.port, function(err) {
   if(err) {
       console.log(err);
@@ -204,6 +228,69 @@ function GetInFileDataChart(title, subtitle, dates, series) {
     };
 
 } // GetInFileDataChart
+
+function GetInFileDataChartTotal(title, subtitle, dates, series) {
+    return {
+        "chart": { "type": 'column' }, //, "height": 500 },
+        "title": { "text": title },
+        "subtitle": { "text": subtitle },
+        "xAxis": {
+            "categories": dates,
+            "title": { "enabled": false },
+            "labels": {
+                "style": {
+                    "fontSize": "8px",
+                    "fontWeight": "bold"
+                }
+            }
+        },
+        "yAxis": {
+            "title": {
+                "text": 'Сумма рублей',
+                "style": {
+                    "fontSize": "8px",
+                    "fontWeight": "bold"
+                }
+            },
+            "labels": {
+                "enabled": false,
+                "style": {
+                    "fontSize": "8px",
+                    "fontWeight": "bold"
+                }
+            },
+            "stackLabels": {
+                "enabled": true,
+                "style": {
+                    "fontSize": "8px",
+                    "fontWeight": "bold",
+                    "color": "(Highcharts.theme && Highcharts.theme.textColor) || 'gray'"
+                }
+            }
+        },
+
+        "plotOptions": {
+            "column": {
+                "stacking": 'normal',
+                "dataLabels": {
+                    "enabled": true,
+                    "style": {
+                        "fontSize": "8px",
+                        "fontWeight": "bold"
+                    }
+                }
+            }
+        },
+        "legend": {
+            "itemStyle": {
+                 "fontSize":'9px',
+                 "fontWeight": "normal"
+              }
+        },
+        "series": series
+    };
+
+} // GetInFileDataChartTotal
 
 
 function GetInFileDataBar(title, kkms, cashValues, cardValues, maxValue) {
