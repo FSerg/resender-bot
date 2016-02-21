@@ -246,7 +246,7 @@ function GetInFileDataChartTotal(title, subtitle, dates, series) {
         },
         "yAxis": {
             "title": {
-                "text": 'Сумма рублей',
+                "text": 'Сумма тыс.рублей',
                 "style": {
                     "fontSize": "8px",
                     "fontWeight": "bold"
