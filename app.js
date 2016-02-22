@@ -63,7 +63,7 @@ app.post('/ut12', function(req, res) {
     bot.sendMessage(data.SenderID, myText, opts);
 
     // ПОДГОТОВИМ И ОТПРАВИМ ГРАФИК
-    var inFileData = GetInFileDataBar(data.Title, kkms, cashValues, cardValues, maxValue);
+    var inFileData = GetInFileBarChartHorizontal(data.Title, kkms, cashValues, cardValues, maxValue);
 
     SendPic(data.SenderID, inFileData, 800, function (error) {
         if (error) {
@@ -86,9 +86,8 @@ app.post('/ut3', function(req, res) {
     var data = req.body;
 
     // ПОДГОТОВИМ И ОТПРАВИМ ГРАФИК
-    var inFileData = GetInFileDataChart(data.Title, data.SubTitle, data.dates, data.series);
+    var inFileData = GetInFileAreaChart(data.Title, data.SubTitle, data.dates, data.series);
 
-    console.log('chart!');
     SendPic(data.SenderID, inFileData, 950, function (error) {
         if (error) {
             // ОТПРАВИМ Ошибочный СТАТУС ВЫПОЛНЕНИЯ
@@ -110,9 +109,8 @@ app.post('/ut4', function(req, res) {
     var data = req.body;
 
     // ПОДГОТОВИМ И ОТПРАВИМ ГРАФИК
-    var inFileData = GetInFileDataChartTotal(data.Title, data.SubTitle, data.dates, data.series);
+    var inFileData = GetInFileBarChartVertical(data.Title, data.SubTitle, data.dates, data.series);
 
-    console.log('chart!');
     SendPic(data.SenderID, inFileData, 950, function (error) {
         if (error) {
             // ОТПРАВИМ Ошибочный СТАТУС ВЫПОЛНЕНИЯ
@@ -148,13 +146,12 @@ function SendPic(SenderID, inFileData, width, callback) {
     // запустим конвертер
     childProcess.execFile(phantom.path, childArgs, null, function(error, stdout, stderr) {
         if (error) {
-            console.log('error converting!');
+            console.log('Error highcharts converting!');
             console.log(error);
             callback(error);
         }
 
         // отправляем файл
-        console.log('ready send pic!');
         bot.sendPhoto(SenderID, picFileName, {title: 'График'})
             .then(function(resp) {
                 console.log("Pic was successfully sent!");
@@ -166,7 +163,7 @@ function SendPic(SenderID, inFileData, width, callback) {
     });
 }
 
-function GetInFileDataChart(title, subtitle, dates, series) {
+function GetInFileAreaChart(title, subtitle, dates, series) {
     return {
         "chart": { "type": 'area' }, //, "height": 500 },
         "title": { "text": title },
@@ -209,6 +206,7 @@ function GetInFileDataChart(title, subtitle, dates, series) {
         "plotOptions": {
             "area": {
                 "stacking": 'normal'
+                // включение отображения внутр.значений
                 // "dataLabels": {
                 //     "enabled": true,
                 //     "style": {
@@ -227,9 +225,9 @@ function GetInFileDataChart(title, subtitle, dates, series) {
         "series": series
     };
 
-} // GetInFileDataChart
+} // GetInFileAreaChart
 
-function GetInFileDataChartTotal(title, subtitle, dates, series) {
+function GetInFileBarChartVertical(title, subtitle, dates, series) {
     return {
         "chart": { "type": 'column' }, //, "height": 500 },
         "title": { "text": title },
@@ -290,10 +288,10 @@ function GetInFileDataChartTotal(title, subtitle, dates, series) {
         "series": series
     };
 
-} // GetInFileDataChartTotal
+} // GetInFileBarChartVertical
 
 
-function GetInFileDataBar(title, kkms, cashValues, cardValues, maxValue) {
+function GetInFileBarChartHorizontal(title, kkms, cashValues, cardValues, maxValue) {
     return  {
         "chart": {
             "type": "bar"
@@ -332,6 +330,7 @@ function GetInFileDataBar(title, kkms, cashValues, cardValues, maxValue) {
                  "stacking": "normal"
              }
          },
+        // включение отображения внутр.значений
         // "plotOptions": {
         //     "series": {
         //         "stacking": "normal",
@@ -355,7 +354,7 @@ function GetInFileDataBar(title, kkms, cashValues, cardValues, maxValue) {
             "data": cashValues
         }]
     };
-} // GetInFileDataBar
+} // GetInFileBarChartHorizontal
 
 function uniqueVal(value, index, self) {
     return self.indexOf(value) === index;
